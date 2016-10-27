@@ -13,8 +13,12 @@ public class HammingBit extends Bit {
         this.position = position;
     }
 
+    public Bit decideValueExcludeSelf(BitStream bitmap) {
+        return decideValueFromPosition(position * 2, bitmap);
+    }
+
     public Bit decideAndSetValueExcludeSelf(BitStream bitmap) {
-        Bit resultBit = decideValueFromPosition(position * 2, bitmap);
+        Bit resultBit = decideValueExcludeSelf(bitmap);
         setValue(resultBit);
         return resultBit;
     }
