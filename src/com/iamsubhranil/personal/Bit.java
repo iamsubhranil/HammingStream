@@ -9,6 +9,10 @@ public class Bit {
 
     private boolean value = false;
 
+    public Bit() {
+        value = false;
+    }
+
     public Bit(int val){
         value = (val==1);
     }
@@ -23,6 +27,18 @@ public class Bit {
 
     public int getValue(){
         return value?1:0;
+    }
+
+    public void setValue(Bit copyBit) {
+        setValue(copyBit.getBoolean());
+    }
+
+    public void setValue(int value) {
+        this.value = (value == 1);
+    }
+
+    public void setValue(boolean value) {
+        this.value = value;
     }
 
     public boolean getBoolean(){
