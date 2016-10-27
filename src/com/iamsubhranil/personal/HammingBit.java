@@ -14,7 +14,7 @@ public class HammingBit extends Bit {
     }
 
     public Bit decideValueExcludeSelf(BitStream bitmap) {
-        return decideValueFromPosition(position * 2, bitmap);
+        return decideValueFromPosition(position + 1, bitmap);
     }
 
     public Bit decideAndSetValueExcludeSelf(BitStream bitmap) {
@@ -30,12 +30,12 @@ public class HammingBit extends Bit {
         start++;
         while (start < max) {
             if ((start & position) == position) {
-                Bit nextBit = bitmap.get(start);
-                resultBit = nextBit.XOR(previousBit);
-                previousBit = nextBit;
+                Bit nextBit = bitmap.get((start - 1));
+                resultBit = nextBit.XOR(resultBit);
             }
             start++;
         }
+        resultBit = resultBit.XOR(previousBit);
         return resultBit;
     }
 
