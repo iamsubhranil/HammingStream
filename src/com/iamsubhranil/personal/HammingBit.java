@@ -25,7 +25,7 @@ public class HammingBit extends Bit {
 
     private Bit decideValueFromPosition(int start, BitStream bitmap) {
         int max = bitmap.size();
-        Bit previousBit = bitmap.get(start);
+        Bit previousBit = bitmap.get(start - 1);
         Bit resultBit = new Bit();
         start++;
         while (start < max) {

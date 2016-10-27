@@ -52,7 +52,7 @@ public class Converter {
             System.out.println("Size of bytes : " + bits.toBytes().size());
             System.out.println("Adding hamming bits..");
             addHammingBits(bits);
-            bits.set(7, bits.get(7).complement());
+            //    bits.set(7, bits.get(7).complement());
             System.out.println("Size of bits\nActual : " + bitsize * 8 + "\tRecorded : " + bits.size());
             System.out.println("Dumping to test_tobin.txt..");
             FileOutputStream fileOutputStream = new FileOutputStream("test_tobin.txt");
