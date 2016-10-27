@@ -18,11 +18,37 @@ public class BitStream extends ArrayList<Bit> {
 
     public void addInt(int i) {
         int counter = 0;
-        while (i > 0 || counter < 8) {
-            add(new Bit(i & 1));
-            i = i >> 1;
+        System.out.println("Adding " + i + "..");
+        System.out.print("Added : ");
+        ArrayList<Bit> backingList = new ArrayList<>(8);
+        while (counter < 8) {
+            backingList.add(new Bit(i % 2));
+            i = (i - (i % 2)) / 2;
             counter++;
         }
+        int size = backingList.size() - 1;
+        while (size >= 0) {
+            add(backingList.get(size));
+            System.out.print(backingList.get(size));
+            size--;
+        }
+        System.out.println();
+    }
+
+    public ArrayList<Integer> toBytes() {
+        ArrayList<Integer> bytes = new ArrayList<>(size() / 8);
+        int[] counter = {0};
+        int[] presentNum = {0};
+        forEach(bit -> {
+            presentNum[0] = presentNum[0] + (bit.getValue() * ((int) Math.pow(2, counter[0])));
+            counter[0]++;
+            if (counter[0] == 7) {
+                bytes.add(presentNum[0]);
+                counter[0] = 0;
+                presentNum[0] = 0;
+            }
+        });
+        return bytes;
     }
 
 }

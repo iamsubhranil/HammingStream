@@ -1,0 +1,5 @@
+this is a test file to test the correctness of hammmingstream!
+!@#$%^&*()~`-=+_[];',./{}:"<>?\|
+a quick brown fox jumps over the lazy dog
+A QUICK BROWN FOX JUMPS OVER THE LAZY DOG
+1234567890

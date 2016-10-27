@@ -1,8 +1,8 @@
 package com.iamsubhranil.personal;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Author : Nil
@@ -17,16 +17,22 @@ public class Converter {
         try {
 
             BitStream bits = new BitStream();
-            FileInputStream fileInputStream = new FileInputStream("summary.txt");
+            FileInputStream fileInputStream = new FileInputStream("test.txt");
             int i;
-            File f = new File("summary.txt");
             System.out.println("Reading file..");
-            System.out.println(fileInputStream.read());
+            ArrayList<Integer> backingList = new ArrayList<>();
             while ((i = fileInputStream.read()) != -1) {
                 bits.addInt(i);
+                backingList.add(i);
             }
             fileInputStream.close();
-            //  bits.forEach(System.out::print);
+            int[] counter = {0};
+            bits.toBytes().forEach(in -> {
+                if (in != backingList.get(counter[0])) {
+                    System.out.println("Value mismatch at position " + counter[0] + "\nAcutal Value : " + backingList.get(counter[0]) + " Recorded Value : " + in);
+                }
+                counter[0]++;
+            });
 
         } catch (IOException e) {
             e.printStackTrace();
