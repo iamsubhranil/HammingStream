@@ -37,15 +37,15 @@ public class BitStream extends ArrayList<Bit> {
 
     public ArrayList<Integer> toBytes() {
         ArrayList<Integer> bytes = new ArrayList<>(size() / 8);
-        int[] counter = {0};
-        int[] presentNum = {0};
+        int[] counter = {7};
+        int[] presentByte = {0};
         forEach(bit -> {
-            presentNum[0] = presentNum[0] + (bit.getValue() * ((int) Math.pow(2, counter[0])));
-            counter[0]++;
-            if (counter[0] == 7) {
-                bytes.add(presentNum[0]);
+            presentByte[0] = presentByte[0] + (bit.getValue() * ((int) Math.pow(2, counter[0])));
+            counter[0]--;
+            if (counter[0] == 0) {
+                bytes.add(presentByte[0]);
                 counter[0] = 0;
-                presentNum[0] = 0;
+                presentByte[0] = 0;
             }
         });
         return bytes;
