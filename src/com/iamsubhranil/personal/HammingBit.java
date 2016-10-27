@@ -1,7 +1,5 @@
 package com.iamsubhranil.personal;
 
-import java.util.ArrayList;
-
 /**
  * Author : Nil
  * Date : 10/27/2016 at 2:20 PM.
@@ -15,13 +13,13 @@ public class HammingBit extends Bit {
         this.position = position;
     }
 
-    public Bit decideAndSetValueExcludeSelf(ArrayList<Bit> bitmap) {
+    public Bit decideAndSetValueExcludeSelf(BitStream bitmap) {
         Bit resultBit = decideValueFromPosition(position * 2, bitmap);
         setValue(resultBit);
         return resultBit;
     }
 
-    private Bit decideValueFromPosition(int start, ArrayList<Bit> bitmap) {
+    private Bit decideValueFromPosition(int start, BitStream bitmap) {
         int max = bitmap.size();
         Bit previousBit = bitmap.get(start);
         Bit resultBit = new Bit();
@@ -37,7 +35,7 @@ public class HammingBit extends Bit {
         return resultBit;
     }
 
-    public Bit decideValueIncludeSelf(ArrayList<Bit> bitmap) {
+    public Bit decideValueIncludeSelf(BitStream bitmap) {
         return decideValueFromPosition(position, bitmap);
     }
 
