@@ -12,7 +12,9 @@ import java.util.ArrayList;
  */
 public class Converter {
 
-    private static final String FILE_NAME = "test";
+    private static final String FILE_NAME = "pic";
+    private static BitStream actualBitstream = new BitStream();
+    private static BitStream recoveredBitstream = new BitStream();
 
     public static void main(String[] args) {
         writeTest();
@@ -49,6 +51,7 @@ public class Converter {
                 //               backingList.add(i);
                 bitsize++;
             }
+            bits.forEach(bit -> actualBitstream.add(bit));
             System.out.println("Reading completed..");
             fileInputStream.close();
             int[] counter = {0};
@@ -93,8 +96,10 @@ public class Converter {
             position = position * 2;
             count++;
         }
+        System.out.println("Found " + count + " hamming bits..");
         int maxpower = errorAtPosition.size() - 1;
         int errint = 0;
+        System.out.println("Generating error position..");
         while (maxpower >= 0) {
             errint = errint + (errorAtPosition.get(maxpower).getValue() * (1 << maxpower));
             maxpower--;
@@ -102,21 +107,27 @@ public class Converter {
         if (errint != 0) {
             System.out.println("Error at position : " + errint);
         } else {
-            position = 1;
-            ArrayList<Integer> removePositions = new ArrayList<>();
             System.out.println("File is ok..");
+            position = 1 << (count - 1);
+            ArrayList<Integer> removePositions = new ArrayList<>();
+            System.out.println("Size before removing hamming bits : " + bitStream.size());
             System.out.println("Removing hamming bits..");
-            while (position < bitStream.size()) {
+            while (position > 0) {
+                System.out.println("Adding position " + (position - 1) + " to the removal list..");
                 removePositions.add(position - 1);
-                position = position * 2;
+                position = position / 2;
             }
-            removePositions.forEach(bitStream::remove);
-            int extraBits = 8 - (count % 8);
+            removePositions.forEach(pos -> bitStream.remove(pos.intValue()));
+            System.out.println("Size after removing hamming bits : " + bitStream.size());
+            int extraBits = 7 - (count % 8);
+            System.out.println("Size before removing the extra bits : " + bitStream.size());
             System.out.println("Removing " + extraBits + " extra bits..");
             while (extraBits > 0) {
                 bitStream.remove(bitStream.size() - 1);
                 extraBits--;
             }
+            System.out.println("Size after removing extra bits : " + bitStream.size());
+            recoveredBitstream = bitStream;
             System.out.println("Dumping final bitmap..");
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(FILE_NAME + "_frombin.txt");
@@ -137,6 +148,8 @@ public class Converter {
             System.out.println("Dumping done..");
         }
         //      bitStream.printStream();
+        //    actualBitstream.printStream();
+        //    recoveredBitstream.printStream();
     }
 
     private static void addHammingBits(BitStream bitStream) {
