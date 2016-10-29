@@ -11,9 +11,7 @@ import java.io.IOException;
  */
 public class Converter {
 
-    private static final String FILE_NAME = "summary";
-    private static BitStream actualBitstream = new BitStream();
-    private static BitStream recoveredBitstream = new BitStream();
+    private static final String FILE_NAME = "pic";
 
     public static void main(String[] args) {
         writeTest();
@@ -42,7 +40,7 @@ public class Converter {
             BitStream bits = new BitStream();
             FileInputStream fileInputStream = new FileInputStream(FILE_NAME + ".txt");
             int i;
-            System.out.println("Reading priginal file..");
+            System.out.println("Reading original file..");
             int bitsize = 0;
 //            ArrayList<Integer> backingList = new ArrayList<>();
             while ((i = fileInputStream.read()) != -1) {
@@ -50,8 +48,8 @@ public class Converter {
                 //               backingList.add(i);
                 bitsize++;
             }
-            bits.forEach(bit -> actualBitstream.add(bit));
             System.out.println("Reading completed..");
+            //     bits.printStream();
             fileInputStream.close();
             int[] counter = {0};
             System.out.println("Size of bytes : " + bits.toBytes().size());
@@ -126,7 +124,6 @@ public class Converter {
                 }
                 System.out.println("Size after removing extra bits : " + bitStream.size());
             }
-            recoveredBitstream = bitStream;
             System.out.println("Dumping final bitmap..");
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(FILE_NAME + "_frombin.txt");
