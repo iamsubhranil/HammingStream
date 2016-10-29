@@ -3,6 +3,7 @@ package com.iamsubhranil.personal;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Author : Nil
@@ -11,6 +12,8 @@ import java.io.IOException;
  */
 public class Converter {
 
+    private static final String FILE_NAME = "test";
+
     public static void main(String[] args) {
         writeTest();
         readTest();
@@ -18,10 +21,10 @@ public class Converter {
 
     private static void readTest() {
         try {
-            FileInputStream fileInputStream = new FileInputStream("test_tobin.txt");
+            FileInputStream fileInputStream = new FileInputStream(FILE_NAME + "_tobin.txt");
             BitStream bitStream = new BitStream();
             int i = 0;
-            System.out.println("Reading from test_tobin.txt");
+            System.out.println("Reading from " + FILE_NAME + "_tobin.txt");
             while ((i = fileInputStream.read()) != -1) {
                 bitStream.addInt(i);
             }
@@ -36,9 +39,9 @@ public class Converter {
     private static void writeTest() {
         try {
             BitStream bits = new BitStream();
-            FileInputStream fileInputStream = new FileInputStream("test.txt");
+            FileInputStream fileInputStream = new FileInputStream(FILE_NAME + ".txt");
             int i;
-            System.out.println("Reading file..");
+            System.out.println("Reading priginal file..");
             int bitsize = 0;
 //            ArrayList<Integer> backingList = new ArrayList<>();
             while ((i = fileInputStream.read()) != -1) {
@@ -52,10 +55,10 @@ public class Converter {
             System.out.println("Size of bytes : " + bits.toBytes().size());
             System.out.println("Adding hamming bits..");
             addHammingBits(bits);
-            //    bits.set(7, bits.get(7).complement());
+            //        bits.set(237, bits.get(237).complement());
             System.out.println("Size of bits\nActual : " + bitsize * 8 + "\tRecorded : " + bits.size());
-            System.out.println("Dumping to test_tobin.txt..");
-            FileOutputStream fileOutputStream = new FileOutputStream("test_tobin.txt");
+            System.out.println("Dumping to " + FILE_NAME + "_tobin.txt..");
+            FileOutputStream fileOutputStream = new FileOutputStream(FILE_NAME + "_tobin.txt");
             bits.toBytes().forEach(in -> {
                 //   if (in != backingList.get(counter[0])) {
                 //        System.err.println("Value mismatch at position " + counter[0] + "..\nActual value : " + backingList.get(counter[0]) + "\nSaved value : " + in);
@@ -77,36 +80,101 @@ public class Converter {
 
     private static void checkAndCorrectBitmap(BitStream bitStream) {
         int position = 1;
-        System.out.println("Checking error..\n");
-        int prevsize = bitStream.size();
+        int count = 0;
+        System.out.println("Checking error..");
+        int streamSize = bitStream.size();
+        bitStream.remove(streamSize - 1);
         BitStream errorAtPosition = new BitStream();
-        while (position < prevsize) {
+        while (position < streamSize) {
             HammingBit hammingBit = new HammingBit(position);
-            hammingBit.setValue(bitStream.get(position));
+            hammingBit.setValue(bitStream.get(position - 1));
             Bit errorCode = hammingBit.decideValueIncludeSelf(bitStream);
             errorAtPosition.add(errorCode);
             position = position * 2;
+            count++;
         }
-        errorAtPosition.forEach(bit -> System.out.printf("%d", bit.getValue()));
         int maxpower = errorAtPosition.size() - 1;
         int errint = 0;
         while (maxpower >= 0) {
             errint = errint + (errorAtPosition.get(maxpower).getValue() * (1 << maxpower));
             maxpower--;
         }
-        System.out.println("\nError at position : " + errint);
+        if (errint != 0) {
+            System.out.println("Error at position : " + errint);
+        } else {
+            position = 1;
+            ArrayList<Integer> removePositions = new ArrayList<>();
+            System.out.println("File is ok..");
+            System.out.println("Removing hamming bits..");
+            while (position < bitStream.size()) {
+                removePositions.add(position - 1);
+                position = position * 2;
+            }
+            removePositions.forEach(bitStream::remove);
+            int extraBits = 8 - (count % 8);
+            System.out.println("Removing " + extraBits + " extra bits..");
+            while (extraBits > 0) {
+                bitStream.remove(bitStream.size() - 1);
+                extraBits--;
+            }
+            System.out.println("Dumping final bitmap..");
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(FILE_NAME + "_frombin.txt");
+                bitStream.toBytes().forEach(in -> {
+                    //   if (in != backingList.get(counter[0])) {
+                    //        System.err.println("Value mismatch at position " + counter[0] + "..\nActual value : " + backingList.get(counter[0]) + "\nSaved value : " + in);
+                    //    }
+                    try {
+                        fileOutputStream.write(in);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+                fileOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Dumping done..");
+        }
+        //      bitStream.printStream();
     }
 
     private static void addHammingBits(BitStream bitStream) {
         int position = 1;
-        int prevsize = bitStream.size();
-        while (position < prevsize) {
+        int streamSize = bitStream.size();
+        int hammingBitsRequired = 0;
+        System.out.println("Present size : " + streamSize);
+        while ((1 << hammingBitsRequired) < (hammingBitsRequired + streamSize + 1)) {
+            hammingBitsRequired++;
+        }
+        System.out.println("Hamming bits required : " + hammingBitsRequired);
+        int extraBitsRequired = 8 - (hammingBitsRequired % 8);
+        System.out.println("Extra bits required : " + extraBitsRequired);
+        while (extraBitsRequired > 0) {
+            bitStream.add(new Bit());
+            extraBitsRequired--;
+        }
+        streamSize = bitStream.size();
+        //       System.out.println("Actual bitmap : ");
+        //       bitStream.printStream();
+        //      System.out.println("Hamming bits : ");
+        while (position < streamSize) {
             HammingBit hammingBit = new HammingBit(position);
-            System.out.printf("%d", hammingBit.decideAndSetValueExcludeSelf(bitStream).getValue());
             bitStream.add(position - 1, hammingBit);
             position = position * 2;
         }
-        System.out.println("\nHamming bits added : " + (bitStream.size() - prevsize));
+        position = 1;
+        streamSize = bitStream.size();
+        while (position < streamSize) {
+            HammingBit hammingBit = new HammingBit(position);
+            hammingBit.decideAndSetValueExcludeSelf(bitStream);
+            bitStream.set(position - 1, hammingBit);
+            position = position * 2;
+        }
+        //      System.out.println("\nModified bitmap : ");
+        //      bitStream.printStream();
+        System.out.println("Modified stream size : " + bitStream.size());
+        //      System.out.println("Hamming bits added : " + (bitStream.size() - streamSize));
     }
 
 }
