@@ -14,7 +14,7 @@ public class HammingBit extends Bit {
     }
 
     public Bit decideValueExcludeSelf(BitStream bitmap) {
-        return decideValueFromPosition(position + 1, bitmap);
+        return decideValueFromPosition(position + 1, bitmap, true);
     }
 
     public Bit decideAndSetValueExcludeSelf(BitStream bitmap) {
@@ -23,24 +23,34 @@ public class HammingBit extends Bit {
         return resultBit;
     }
 
-    private Bit decideValueFromPosition(int start, BitStream bitmap) {
+    private Bit decideValueFromPosition(int start, BitStream bitmap, boolean excludeSelf) {
         int max = bitmap.size();
-        Bit previousBit = bitmap.get(start - 1);
         Bit resultBit = new Bit();
-        start++;
+        //       int noof1 = 0;
+        //      System.out.println("Bit logging started..");
+        //      System.out.println("Self position : " + position);
+        if (!excludeSelf) {
+            resultBit = bitmap.get(start - 1);
+            //         noof1 = resultBit.getValue();
+            //         System.out.println("Self value : " + resultBit);
+            start++;
+        }
+        //      System.out.println("Starting from position "+start+"..");
         while (start < max) {
             if ((start & position) == position) {
-                Bit nextBit = bitmap.get((start - 1));
+                Bit nextBit = bitmap.get(start - 1);
+                //             System.out.println("\tPosition : " + start + " Value : " + nextBit);
+                //             noof1 = noof1 + nextBit.getValue();
                 resultBit = nextBit.XOR(resultBit);
             }
             start++;
         }
-        resultBit = resultBit.XOR(previousBit);
+        //      System.out.println("Decided value " + resultBit + " for " + noof1 + " 1's");
         return resultBit;
     }
 
     public Bit decideValueIncludeSelf(BitStream bitmap) {
-        return decideValueFromPosition(position, bitmap);
+        return decideValueFromPosition(position, bitmap, false);
     }
 
 }
