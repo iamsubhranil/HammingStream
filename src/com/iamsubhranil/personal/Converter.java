@@ -3,7 +3,6 @@ package com.iamsubhranil.personal;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Author : Nil
@@ -109,15 +108,13 @@ public class Converter {
         } else {
             System.out.println("File is ok..");
             position = 1 << (count - 1);
-            ArrayList<Integer> removePositions = new ArrayList<>();
             System.out.println("Size before removing hamming bits : " + bitStream.size());
             System.out.println("Removing hamming bits..");
             while (position > 0) {
-                //            System.out.println("Adding position " + (position - 1) + " to the removal list..");
-                removePositions.add(position - 1);
+                //            System.out.println("Removing hamming bit from position " + (position - 1) + "..");
+                bitStream.remove(position - 1);
                 position = position / 2;
             }
-            removePositions.forEach(pos -> bitStream.remove(pos.intValue()));
             System.out.println("Size after removing hamming bits : " + bitStream.size());
             if ((count + 1) % 8 != 0) {
                 int extraBits = 7 - (count % 8);
