@@ -35,6 +35,11 @@ public class BitStream extends ArrayList<Bit> {
         }
     }
 
+    public void printStream() {
+        forEach(bit -> System.out.printf("%d", bit.getValue()));
+        System.out.print("\n");
+    }
+
     public ArrayList<Integer> toBytes() {
         //       int bitlimit = size()%8;
         //       addIntInBits(8-bitlimit,bitlimit);
@@ -46,7 +51,7 @@ public class BitStream extends ArrayList<Bit> {
             presentByte[0] = presentByte[0] + (bit.getValue() * (1 << pow[0]));
             counter[0]++;
             pow[0]--;
-            if (((counter[0]) % 8) == 0 || counter[0] == size() - 1) {
+            if (((counter[0]) % 8) == 0) {
                 bytes.add(presentByte[0]);
                 presentByte[0] = 0;
                 pow[0] = 7;
