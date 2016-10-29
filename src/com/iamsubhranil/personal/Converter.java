@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class Converter {
 
-    private static final String FILE_NAME = "pic";
+    private static final String FILE_NAME = "yellow";
 
     public static void main(String[] args) {
         writeTest();
@@ -42,10 +42,11 @@ public class Converter {
             int i;
             System.out.println("Reading original file..");
             int bitsize = 0;
-//            ArrayList<Integer> backingList = new ArrayList<>();
+            //    File f = new File(FILE_NAME + ".txt");
+            //   long size = f.length();
+            //   System.out.print("\nPercent completed : ");
             while ((i = fileInputStream.read()) != -1) {
                 bits.addInt(i);
-                //               backingList.add(i);
                 bitsize++;
             }
             System.out.println("Reading completed..");
@@ -83,7 +84,6 @@ public class Converter {
         int count = 0;
         System.out.println("Checking error..");
         int streamSize = bitStream.size();
-        bitStream.remove(streamSize - 1);
         BitStream errorAtPosition = new BitStream();
         while (position < streamSize) {
             HammingBit hammingBit = new HammingBit(position);
@@ -114,8 +114,8 @@ public class Converter {
                 position = position / 2;
             }
             System.out.println("Size after removing hamming bits : " + bitStream.size());
-            if ((count + 1) % 8 != 0) {
-                int extraBits = 7 - (count % 8);
+            if ((count) % 8 != 0) {
+                int extraBits = 8 - (count % 8);
                 System.out.println("Size before removing the extra bits : " + bitStream.size());
                 System.out.println("Removing " + extraBits + " extra bits..");
                 while (extraBits > 0) {
