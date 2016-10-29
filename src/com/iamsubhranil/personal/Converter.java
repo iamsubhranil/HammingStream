@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class Converter {
 
-    private static final String FILE_NAME = "pic";
+    private static final String FILE_NAME = "summary";
     private static BitStream actualBitstream = new BitStream();
     private static BitStream recoveredBitstream = new BitStream();
 
@@ -113,20 +113,22 @@ public class Converter {
             System.out.println("Size before removing hamming bits : " + bitStream.size());
             System.out.println("Removing hamming bits..");
             while (position > 0) {
-                System.out.println("Adding position " + (position - 1) + " to the removal list..");
+                //            System.out.println("Adding position " + (position - 1) + " to the removal list..");
                 removePositions.add(position - 1);
                 position = position / 2;
             }
             removePositions.forEach(pos -> bitStream.remove(pos.intValue()));
             System.out.println("Size after removing hamming bits : " + bitStream.size());
-            int extraBits = 7 - (count % 8);
-            System.out.println("Size before removing the extra bits : " + bitStream.size());
-            System.out.println("Removing " + extraBits + " extra bits..");
-            while (extraBits > 0) {
-                bitStream.remove(bitStream.size() - 1);
-                extraBits--;
+            if ((count + 1) % 8 != 0) {
+                int extraBits = 7 - (count % 8);
+                System.out.println("Size before removing the extra bits : " + bitStream.size());
+                System.out.println("Removing " + extraBits + " extra bits..");
+                while (extraBits > 0) {
+                    bitStream.remove(bitStream.size() - 1);
+                    extraBits--;
+                }
+                System.out.println("Size after removing extra bits : " + bitStream.size());
             }
-            System.out.println("Size after removing extra bits : " + bitStream.size());
             recoveredBitstream = bitStream;
             System.out.println("Dumping final bitmap..");
             try {
@@ -161,11 +163,13 @@ public class Converter {
             hammingBitsRequired++;
         }
         System.out.println("Hamming bits required : " + hammingBitsRequired);
-        int extraBitsRequired = 8 - (hammingBitsRequired % 8);
-        System.out.println("Extra bits required : " + extraBitsRequired);
-        while (extraBitsRequired > 0) {
-            bitStream.add(new Bit());
-            extraBitsRequired--;
+        if (hammingBitsRequired % 8 > 0) {
+            int extraBitsRequired = 8 - (hammingBitsRequired % 8);
+            System.out.println("Extra bits required : " + extraBitsRequired);
+            while (extraBitsRequired > 0) {
+                bitStream.add(new Bit());
+                extraBitsRequired--;
+            }
         }
         streamSize = bitStream.size();
         //       System.out.println("Actual bitmap : ");
