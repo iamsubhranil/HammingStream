@@ -1,6 +1,7 @@
 package com.iamsubhranil.personal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Author : Nil
@@ -8,6 +9,19 @@ import java.util.ArrayList;
  * Project : HammingStream
  */
 public class BitStream extends ArrayList<Bit> {
+
+    public BitStream() {
+        super();
+    }
+
+    public BitStream(Collection<? extends Bit> c) {
+        super(c);
+    }
+
+    public BitStream(int initialCapacity) {
+        super(initialCapacity);
+    }
+
 
     public void addByte(Byte b) {
         while (b != 0) {
@@ -20,23 +34,33 @@ public class BitStream extends ArrayList<Bit> {
         addIntInBits(i, 8);
     }
 
-    private void addIntInBits(int i, int bitlimit) {
-        int counter = 0;
-        ArrayList<Bit> backingList = new ArrayList<>(8);
-        while (counter < bitlimit) {
-            backingList.add(new Bit(i % 2));
-            i = (i - (i % 2)) / 2;
-            counter++;
+    private void ensureMinimumExtraCapacity(int extraCapacity) {
+        ensureCapacity(size() + extraCapacity);
+        while (extraCapacity > 0) {
+            add(null);
+            extraCapacity--;
         }
-        int size = backingList.size() - 1;
-        while (size >= 0) {
-            add(backingList.get(size));
-            size--;
+    }
+
+    private void addIntInBits(int i, int bitLimit) {
+        int counter = bitLimit;
+        int prevSize = size() - 1;
+        ensureMinimumExtraCapacity(bitLimit);
+        while (counter > 0) {
+            set(prevSize + counter, new Bit(i % 2));
+            i = (i - (i % 2)) / 2;
+            counter--;
         }
     }
 
     public void printStream() {
-        forEach(bit -> System.out.printf("%d", bit.getValue()));
+        forEach(bit -> {
+            if (bit == null) {
+                System.out.print(" null ");
+            } else {
+                System.out.printf("%s", bit.getValue());
+            }
+        });
         System.out.print("\n");
     }
 
