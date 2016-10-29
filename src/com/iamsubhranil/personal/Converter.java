@@ -170,8 +170,7 @@ public class Converter {
         //       bitStream.printStream();
         //      System.out.println("Hamming bits : ");
         while (position < streamSize) {
-            HammingBit hammingBit = new HammingBit(position);
-            bitStream.add(position - 1, hammingBit);
+            bitStream.add(position - 1, null);
             position = position * 2;
         }
         position = 1;
