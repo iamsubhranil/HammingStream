@@ -42,28 +42,21 @@ public class Converter {
             int i;
             System.out.println("Reading original file..");
             int bitsize = 0;
-            //    File f = new File(FILE_NAME + ".txt");
-            //   long size = f.length();
-            //   System.out.print("\nPercent completed : ");
             while ((i = fileInputStream.read()) != -1) {
                 bits.addInt(i);
                 bitsize++;
             }
             System.out.println("Reading completed..");
-            //     bits.printStream();
             fileInputStream.close();
             int[] counter = {0};
             System.out.println("Size of bytes : " + bits.toBytes().size());
             System.out.println("Adding hamming bits..");
             addHammingBits(bits);
-            //        bits.set(237, bits.get(237).complement());
+            bits.set(237, bits.get(237).complement());
             System.out.println("Size of bits\nActual : " + bitsize * 8 + "\tRecorded : " + bits.size());
             System.out.println("Dumping to " + FILE_NAME + "_tobin.txt..");
             FileOutputStream fileOutputStream = new FileOutputStream(FILE_NAME + "_tobin.txt");
             bits.toBytes().forEach(in -> {
-                //   if (in != backingList.get(counter[0])) {
-                //        System.err.println("Value mismatch at position " + counter[0] + "..\nActual value : " + backingList.get(counter[0]) + "\nSaved value : " + in);
-                //    }
                 try {
                     fileOutputStream.write(in);
                 } catch (IOException e) {
@@ -113,7 +106,6 @@ public class Converter {
             System.out.println("Size before removing hamming bits : " + bitStream.size());
             System.out.println("Removing hamming bits..");
             while (position > 0) {
-                //            System.out.println("Removing hamming bit from position " + (position - 1) + "..");
                 bitStream.remove(position - 1);
                 position = position / 2;
             }
@@ -132,9 +124,6 @@ public class Converter {
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(FILE_NAME + "_frombin.txt");
                 bitStream.toBytes().forEach(in -> {
-                    //   if (in != backingList.get(counter[0])) {
-                    //        System.err.println("Value mismatch at position " + counter[0] + "..\nActual value : " + backingList.get(counter[0]) + "\nSaved value : " + in);
-                    //    }
                     try {
                         fileOutputStream.write(in);
                     } catch (IOException e) {
@@ -146,9 +135,6 @@ public class Converter {
                 e.printStackTrace();
             }
             System.out.println("Dumping done..");
-        //      bitStream.printStream();
-        //    actualBitstream.printStream();
-        //    recoveredBitstream.printStream();
     }
 
     private static void addHammingBits(BitStream bitStream) {
@@ -169,9 +155,6 @@ public class Converter {
             }
         }
         streamSize = bitStream.size();
-        //       System.out.println("Actual bitmap : ");
-        //       bitStream.printStream();
-        //      System.out.println("Hamming bits : ");
         while (position < streamSize) {
             bitStream.add(position - 1, null);
             position = position * 2;
@@ -184,10 +167,7 @@ public class Converter {
             bitStream.set(position - 1, hammingBit);
             position = position * 2;
         }
-        //      System.out.println("\nModified bitmap : ");
-        //      bitStream.printStream();
         System.out.println("Modified stream size : " + bitStream.size());
-        //      System.out.println("Hamming bits added : " + (bitStream.size() - streamSize));
     }
 
 }

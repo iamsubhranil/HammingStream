@@ -65,8 +65,6 @@ public class BitStream extends ArrayList<Bit> {
     }
 
     public ArrayList<Integer> toBytes() {
-        //       int bitlimit = size()%8;
-        //       addIntInBits(8-bitlimit,bitlimit);
         ArrayList<Integer> bytes = new ArrayList<>(size() / 8);
         int[] counter = {0};
         int[] pow = {7};
