@@ -103,8 +103,12 @@ public class Converter {
         }
         if (errint != 0) {
             System.out.println("Error at position : " + errint);
+            System.out.println("Correcting error...");
+            bitStream.set(errint - 1, bitStream.get(errint - 1).complement());
+            System.out.println("Bitmap rectified..");
         } else {
             System.out.println("File is ok..");
+        }
             position = 1 << (count - 1);
             System.out.println("Size before removing hamming bits : " + bitStream.size());
             System.out.println("Removing hamming bits..");
@@ -142,7 +146,6 @@ public class Converter {
                 e.printStackTrace();
             }
             System.out.println("Dumping done..");
-        }
         //      bitStream.printStream();
         //    actualBitstream.printStream();
         //    recoveredBitstream.printStream();
