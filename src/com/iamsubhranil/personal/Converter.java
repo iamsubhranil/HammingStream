@@ -1,8 +1,6 @@
 package com.iamsubhranil.personal;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Author : Nil
@@ -35,19 +33,39 @@ public class Converter {
 
     }
 
+    private static BitStream convertIntToBit(int i) {
+        int counter = 8;
+        BitStream bits = new BitStream();
+        bits.ensureMinimumExtraCapacity(8);
+        while (counter > 0) {
+            bits.set(counter, new Bit(i % 2));
+            i = (i - (i % 2)) / 2;
+            counter--;
+        }
+        return bits;
+    }
+
     private static void writeTest() {
         try {
             BitStream bits = new BitStream();
             FileInputStream fileInputStream = new FileInputStream(FILE_NAME + ".txt");
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("temp.bits"));
             int i;
-            System.out.println("Reading original file..");
+            System.out.println("Reading original file and dumping to temp.bits..");
             int bitsize = 0;
             while ((i = fileInputStream.read()) != -1) {
-                bits.addInt(i);
+                convertIntToBit(i).forEach(bit -> {
+                    try {
+                        objectOutputStream.writeObject(bit);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
                 bitsize++;
             }
             System.out.println("Reading completed..");
             fileInputStream.close();
+            objectOutputStream.close();
             int[] counter = {0};
             System.out.println("Size of bytes : " + bits.toBytes().size());
             System.out.println("Adding hamming bits..");
@@ -135,6 +153,13 @@ public class Converter {
                 e.printStackTrace();
             }
             System.out.println("Dumping done..");
+    }
+
+    private static BitStream gatherRequiredBits(String fileName, int position) throws IOException {
+        BitStream bits = new BitStream();
+        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName));
+
+        return bits;
     }
 
     private static void addHammingBits(BitStream bitStream) {

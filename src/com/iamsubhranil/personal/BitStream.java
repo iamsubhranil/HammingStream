@@ -34,7 +34,7 @@ public class BitStream extends ArrayList<Bit> {
         addIntInBits(i, 8);
     }
 
-    private void ensureMinimumExtraCapacity(int extraCapacity) {
+    public void ensureMinimumExtraCapacity(int extraCapacity) {
         ensureCapacity(size() + extraCapacity);
         while (extraCapacity > 0) {
             add(null);

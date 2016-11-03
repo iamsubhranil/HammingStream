@@ -1,11 +1,13 @@
 package com.iamsubhranil.personal;
 
+import java.io.Serializable;
+
 /**
  * Author : Nil
  * Date : 10/27/2016 at 8:48 AM.
  * Project : HammingStream
  */
-public class Bit {
+public class Bit implements Serializable {
 
     private boolean value = false;
 
@@ -29,16 +31,16 @@ public class Bit {
         return value?1:0;
     }
 
+    public void setValue(int value) {
+        this.value = (value == 1);
+    }
+
     public void setValue(boolean value) {
         this.value = value;
     }
 
     public void setValue(Bit copyBit) {
         setValue(copyBit.getBoolean());
-    }
-
-    public void setValue(int value) {
-        this.value = (value == 1);
     }
 
     public boolean getBoolean(){
