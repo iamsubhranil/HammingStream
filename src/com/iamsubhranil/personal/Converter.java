@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class Converter {
 
-    private static final String FILE_NAME = "yellow";
+    private static final String FILE_NAME = "test";
 
     public static void main(String[] args) {
         writeTest();
@@ -52,7 +52,7 @@ public class Converter {
             System.out.println("Size of bytes : " + bits.toBytes().size());
             System.out.println("Adding hamming bits..");
             addHammingBits(bits);
-            bits.set(237, bits.get(237).complement());
+            //        bits.set(237, bits.get(237).complement());
             System.out.println("Size of bits\nActual : " + bitsize * 8 + "\tRecorded : " + bits.size());
             System.out.println("Dumping to " + FILE_NAME + "_tobin.txt..");
             FileOutputStream fileOutputStream = new FileOutputStream(FILE_NAME + "_tobin.txt");
@@ -96,45 +96,45 @@ public class Converter {
         }
         if (errint != 0) {
             System.out.println("Error at position : " + errint);
-            System.out.println("Correcting error...");
+            System.out.println("Correcting error..");
             bitStream.set(errint - 1, bitStream.get(errint - 1).complement());
             System.out.println("Bitmap rectified..");
         } else {
             System.out.println("File is ok..");
         }
-            position = 1 << (count - 1);
-            System.out.println("Size before removing hamming bits : " + bitStream.size());
-            System.out.println("Removing hamming bits..");
-            while (position > 0) {
-                bitStream.remove(position - 1);
-                position = position / 2;
+        position = 1 << (count - 1);
+        System.out.println("Size before removing hamming bits : " + bitStream.size());
+        System.out.println("Removing hamming bits..");
+        while (position > 0) {
+            bitStream.remove(position - 1);
+            position = position / 2;
+        }
+        System.out.println("Size after removing hamming bits : " + bitStream.size());
+        if ((count) % 8 != 0) {
+            int extraBits = 8 - (count % 8);
+            System.out.println("Size before removing the extra bits : " + bitStream.size());
+            System.out.println("Removing " + extraBits + " extra bits..");
+            while (extraBits > 0) {
+                bitStream.remove(bitStream.size() - 1);
+                extraBits--;
             }
-            System.out.println("Size after removing hamming bits : " + bitStream.size());
-            if ((count) % 8 != 0) {
-                int extraBits = 8 - (count % 8);
-                System.out.println("Size before removing the extra bits : " + bitStream.size());
-                System.out.println("Removing " + extraBits + " extra bits..");
-                while (extraBits > 0) {
-                    bitStream.remove(bitStream.size() - 1);
-                    extraBits--;
+            System.out.println("Size after removing extra bits : " + bitStream.size());
+        }
+        System.out.println("Dumping final bitmap..");
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(FILE_NAME + "_frombin.txt");
+            bitStream.toBytes().forEach(in -> {
+                try {
+                    fileOutputStream.write(in);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                System.out.println("Size after removing extra bits : " + bitStream.size());
-            }
-            System.out.println("Dumping final bitmap..");
-            try {
-                FileOutputStream fileOutputStream = new FileOutputStream(FILE_NAME + "_frombin.txt");
-                bitStream.toBytes().forEach(in -> {
-                    try {
-                        fileOutputStream.write(in);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println("Dumping done..");
+            });
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Dumping done..");
     }
 
     private static void addHammingBits(BitStream bitStream) {
